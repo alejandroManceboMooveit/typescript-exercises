@@ -64,7 +64,13 @@ function logPerson(person: Person) {
     );
 }
 
-function filterPersons(persons: Person[], personType: string, criteria: unknown): unknown[] {
+type CriteriaPerson = {
+    [K in keyof Person]?: string | number 
+}
+
+function filterPersons(persons: Person[], personType: 'user', criteria: CriteriaPerson): User[];
+function filterPersons(persons: Person[], personType: 'admin', criteria: CriteriaPerson): Admin[];
+function filterPersons(persons: Person[], personType: string, criteria: CriteriaPerson): Person[] {
     return persons
         .filter((person) => person.type === personType)
         .filter((person) => {

@@ -1,3 +1,4 @@
+import { rejects } from 'assert';
 import chalk from 'chalk';
 
 /*
@@ -70,9 +71,19 @@ type ApiResponse<T> = (
         error: string;
     }
 );
+type returnCallback<T> = (callback: (response: ApiResponse<T>) => void) => void;
+type returnCallbackPromesify<T> = () => Promise<T>; 
 
-function promisify(arg: unknown): unknown {
-    return null;
+function promisify<T>(func: returnCallback<T>): returnCallbackPromesify<T> {
+    return () => new Promise((resolve, reject) => {
+        func(response => {
+            if (response.status === 'success') {
+                resolve(response.data);
+            } else {
+                reject(new Error(response.error));
+            }
+        });
+    });
 }
 
 const oldApi = {
